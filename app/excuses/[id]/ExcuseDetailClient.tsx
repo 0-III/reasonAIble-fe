@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,54 +18,40 @@ import { ArrowLeft, Copy, Edit, Save, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { fetchExcuseById, updateExcuse, deleteExcuse } from "@/lib/api";
+import { updateExcuse, deleteExcuse } from "@/lib/api";
 
-export default function ExcuseDetailClient({ id }: { id: string }) {
+export default function ExcuseDetailClient({
+  id,
+  excuse,
+}: {
+  id: string;
+  excuse: Excuse;
+}) {
   const router = useRouter();
   const { toast } = useToast();
-  const [excuse, setExcuse] = useState<Excuse | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [modifiedExcuse, setModifiedExcuse] = useState("");
-
-  useEffect(() => {
-    async function loadExcuse() {
-      try {
-        const data = await fetchExcuseById(id); // 서버에서 데이터 가져오기
-        setExcuse(data);
-        setModifiedExcuse(data.modifiedExcuse || data.excuse);
-      } catch (error) {
-        console.error("Failed to fetch excuse:", error);
-        router.push("/excuses");
-      }
-    }
-
-    loadExcuse();
-  }, [id, router]);
+  const [modifiedExcuse, setModifiedExcuse] = useState(
+    excuse.modifiedExcuse || excuse.excuse
+  );
 
   const handleSaveModification = async () => {
-    if (!excuse) return;
-
     try {
-      const updatedExcuse = await updateExcuse(excuse.id, {
+      const updatedExcuse = await updateExcuse(id, {
         modifiedExcuse,
-      }); // 서버에 수정된 데이터 저장
-      setExcuse(updatedExcuse);
-      setIsEditing(false);
-
+      });
       toast({
         title: "Excuse updated",
         description: "Your modified excuse has been saved.",
       });
+      setIsEditing(false);
     } catch (error) {
       console.error("Failed to update excuse:", error);
     }
   };
 
   const handleDelete = async () => {
-    if (!excuse) return;
-
     try {
-      await deleteExcuse(excuse.id); // 서버에서 데이터 삭제
+      await deleteExcuse(id);
       router.push("/excuses");
 
       toast({
@@ -78,23 +64,13 @@ export default function ExcuseDetailClient({ id }: { id: string }) {
   };
 
   const handleCopy = () => {
-    if (!excuse) return;
-
-    navigator.clipboard.writeText(modifiedExcuse || excuse.excuse);
+    navigator.clipboard.writeText(modifiedExcuse);
 
     toast({
       title: "Copied to clipboard",
       description: "Your excuse is ready to use.",
     });
   };
-
-  if (!excuse) {
-    return (
-      <div className="container flex items-center justify-center py-12">
-        <p>Loading excuse...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="container max-w-3xl py-4 px-4 md:py-12 md:px-6">
@@ -166,7 +142,7 @@ export default function ExcuseDetailClient({ id }: { id: string }) {
               />
             ) : (
               <p className="rounded-md bg-muted p-3 md:p-4 text-sm">
-                {modifiedExcuse || excuse.excuse}
+                {modifiedExcuse}
               </p>
             )}
           </div>

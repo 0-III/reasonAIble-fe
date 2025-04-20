@@ -5,15 +5,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(dateString: string): string {
+export function formatDate(dateString: string | null | undefined): string {
+  if (!dateString) {
+    return "Invalid date"; // 날짜 값이 없을 경우 기본 메시지 반환
+  }
+
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", {
+  if (isNaN(date.getTime())) {
+    return "Invalid date"; // 유효하지 않은 날짜일 경우 기본 메시지 반환
+  }
+
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
+  });
 }
 
 export function formatDistanceToNow(dateString: string): string {
