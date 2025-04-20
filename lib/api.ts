@@ -1,0 +1,13 @@
+import axios from "axios";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // 백엔드 API 주소
+
+export async function generateExcuse(situation: string) {
+  const response = await axios.post(`${API_BASE_URL}/excuses`, { situation });
+  return response.data; // 백엔드에서 반환된 데이터를 반환
+}
+
+export async function fetchExcuses() {
+  const response = await axios.get(`${API_BASE_URL}/excuses`);
+  return response.data.data; // 모든 excuses 데이터 반환
+}
