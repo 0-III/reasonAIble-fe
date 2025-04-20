@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { ModeToggle } from "@/components/mode-toggle"
-import { Lightbulb, Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Lightbulb, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const navItems = [
     { name: "Generate", path: "/" },
     { name: "List", path: "/excuses" },
     { name: "Dashboard", path: "/dashboard" },
-  ]
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -32,7 +32,9 @@ export function Header() {
                 key={item.path}
                 href={item.path}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === item.path ? "text-primary" : "text-muted-foreground"
+                  pathname === item.path
+                    ? "text-primary"
+                    : "text-muted-foreground"
                 }`}
               >
                 {item.name}
@@ -55,7 +57,9 @@ export function Header() {
                     key={item.path}
                     href={item.path}
                     className={`text-base font-medium transition-colors hover:text-primary py-2 ${
-                      pathname === item.path ? "text-primary" : "text-muted-foreground"
+                      pathname === item.path
+                        ? "text-primary"
+                        : "text-muted-foreground"
                     }`}
                   >
                     {item.name}
@@ -69,5 +73,5 @@ export function Header() {
         </nav>
       </div>
     </header>
-  )
+  );
 }

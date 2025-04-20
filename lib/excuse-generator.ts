@@ -1,10 +1,10 @@
-import type { Excuse } from "@/types/excuse"
+import type { Excuse } from "@/types/excuse";
 
 // This is a mock function that would be replaced with an actual API call
 // to a service like OpenAI in a real application
 export async function generateExcuse(situation: string): Promise<Excuse> {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   // Generate a random excuse based on the situation
   const excuses = [
@@ -18,10 +18,10 @@ export async function generateExcuse(situation: string): Promise<Excuse> {
     `My internet service provider had an outage in my area, and I couldn't access the necessary resources.`,
     `I had already completed it, but there must have been a technical glitch because I can't find the submission anywhere.`,
     `I misunderstood the timeline and thought it was due next week. I'll have it done immediately.`,
-  ]
+  ];
 
   // Pick a random excuse
-  const randomExcuse = excuses[Math.floor(Math.random() * excuses.length)]
+  const randomExcuse = excuses[Math.floor(Math.random() * excuses.length)];
 
   return {
     id: generateId(),
@@ -29,9 +29,12 @@ export async function generateExcuse(situation: string): Promise<Excuse> {
     excuse: randomExcuse,
     createdAt: new Date().toISOString(),
     usageCount: 0,
-  }
+  };
 }
 
 function generateId(): string {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }
