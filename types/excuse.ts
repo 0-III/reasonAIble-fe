@@ -1,6 +1,6 @@
 export interface Excuse {
   id: string;
-  situation: string;
+  situation?: string | null;
   excuse: string;
   modifiedExcuse?: string;
   createdAt: string;

@@ -35,11 +35,11 @@ export default function GenerateExcusePage() {
       const excuse = await generateExcuse(situation);
 
       // Store in local storage for demo purposes
-      const excuses: Excuse[] = JSON.parse(
-        localStorage.getItem("excuses") || "[]",
-      );
-      excuses.push(excuse);
-      localStorage.setItem("excuses", JSON.stringify(excuses));
+      // const excuses: Excuse[] = JSON.parse(
+      //   localStorage.getItem("excuses") || "[]",
+      // );
+      // excuses.push(excuse);
+      // localStorage.setItem("excuses", JSON.stringify(excuses));
 
       // Navigate to the result page
       router.push(`/excuses/${excuse.id}`);

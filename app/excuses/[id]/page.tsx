@@ -30,7 +30,7 @@ export default function ExcuseDetailPage() {
   useEffect(() => {
     // In a real app, this would be an API call
     const storedExcuses: Excuse[] = JSON.parse(
-      localStorage.getItem("excuses") || "[]",
+      localStorage.getItem("excuses") || "[]"
     );
     const foundExcuse = storedExcuses.find((e) => e.id === params.id);
 
@@ -46,7 +46,7 @@ export default function ExcuseDetailPage() {
     if (!excuse) return;
 
     const storedExcuses: Excuse[] = JSON.parse(
-      localStorage.getItem("excuses") || "[]",
+      localStorage.getItem("excuses") || "[]"
     );
     const updatedExcuses = storedExcuses.map((e) => {
       if (e.id === excuse.id) {
@@ -73,7 +73,7 @@ export default function ExcuseDetailPage() {
     if (!excuse) return;
 
     const storedExcuses: Excuse[] = JSON.parse(
-      localStorage.getItem("excuses") || "[]",
+      localStorage.getItem("excuses") || "[]"
     );
     const updatedExcuses = storedExcuses.filter((e) => e.id !== excuse.id);
 
@@ -93,7 +93,7 @@ export default function ExcuseDetailPage() {
 
     // Update usage count
     const storedExcuses: Excuse[] = JSON.parse(
-      localStorage.getItem("excuses") || "[]",
+      localStorage.getItem("excuses") || "[]"
     );
     const updatedExcuses = storedExcuses.map((e) => {
       if (e.id === excuse.id) {

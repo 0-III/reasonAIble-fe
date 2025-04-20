@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import type { Excuse } from "@/types/excuse";
 import { formatDistanceToNow } from "@/lib/utils";
 import { ArrowRight, Search } from "lucide-react";
+import { fetchExcuses } from "@/lib/api";
 
 export default function ExcusesListPage() {
   const [excuses, setExcuses] = useState<Excuse[]>([]);
@@ -21,16 +22,27 @@ export default function ExcusesListPage() {
 
   useEffect(() => {
     // In a real app, this would be an API call
-    const storedExcuses: Excuse[] = JSON.parse(
-      localStorage.getItem("excuses") || "[]",
-    );
-    setExcuses(storedExcuses);
+    // const storedExcuses: Excuse[] = JSON.parse(
+    //   localStorage.getItem("excuses") || "[]",
+    // );
+    // setExcuses(storedExcuses);
+    async function loadExcuses() {
+      try {
+        const excuses = await fetchExcuses(); // 백엔드에서 데이터 가져오기
+        setExcuses(excuses);
+      } catch (error) {
+        console.error("Failed to fetch excuses:", error);
+      }
+    }
+
+    loadExcuses();
   }, []);
 
   const filteredExcuses = excuses.filter(
     (excuse) =>
-      excuse.situation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      excuse.excuse.toLowerCase().includes(searchTerm.toLowerCase()),
+      (excuse.situation?.toLowerCase() || "").includes(
+        searchTerm.toLowerCase()
+      ) || excuse.excuse.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -63,7 +75,7 @@ export default function ExcusesListPage() {
                 <Card className="h-full transition-all hover:shadow-md">
                   <CardHeader className="pb-2">
                     <CardTitle className="line-clamp-1 text-lg">
-                      {excuse.situation}
+                      {excuse.situation || "Untitled"}
                     </CardTitle>
                     <CardDescription className="flex items-center text-xs">
                       {formatDistanceToNow(excuse.createdAt)} ago
