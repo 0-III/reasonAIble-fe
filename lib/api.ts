@@ -11,3 +11,17 @@ export async function fetchExcuses() {
   const response = await axios.get(`${API_BASE_URL}/excuses`);
   return response.data.data; // 모든 excuses 데이터 반환
 }
+
+export async function fetchExcuseById(id: string) {
+  const response = await axios.get(`${API_BASE_URL}/excuses/${id}`);
+  return response.data;
+}
+
+export async function updateExcuse(id: string, data: Partial<Excuse>) {
+  const response = await axios.put(`${API_BASE_URL}/excuses/${id}`, data);
+  return response.data;
+}
+
+export async function deleteExcuse(id: string) {
+  await axios.delete(`${API_BASE_URL}/excuses/${id}`);
+}
