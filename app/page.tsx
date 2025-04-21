@@ -14,8 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { generateExcuse } from "@/lib/excuse-generator";
-import type { Excuse } from "@/types/excuse";
+import { generateExcuse } from "@/lib/api";
 import { Sparkles } from "lucide-react";
 
 export default function GenerateExcusePage() {
@@ -31,17 +30,10 @@ export default function GenerateExcusePage() {
     setIsGenerating(true);
 
     try {
-      // In a real app, this would be an API call
+      // API 호출을 통해 excuse 생성
       const excuse = await generateExcuse(situation);
 
-      // Store in local storage for demo purposes
-      // const excuses: Excuse[] = JSON.parse(
-      //   localStorage.getItem("excuses") || "[]",
-      // );
-      // excuses.push(excuse);
-      // localStorage.setItem("excuses", JSON.stringify(excuses));
-
-      // Navigate to the result page
+      // 생성된 excuse의 ID로 상세 페이지로 이동
       router.push(`/excuses/${excuse.id}`);
     } catch (error) {
       console.error("Failed to generate excuse:", error);
