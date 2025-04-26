@@ -28,3 +28,87 @@ export async function updateExcuse(id: string, data: Partial<Excuse>) {
 export async function deleteExcuse(id: string) {
   await axios.delete(`${API_BASE_URL}/excuses/${id}`);
 }
+
+export async function fetchWithAuth(url: string, options: RequestInit = {}) {
+  const token = localStorage.getItem("accessToken");
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+
+  return fetch(url, {
+    ...options,
+    headers,
+  });
+}
+
+export async function registerMember(
+  email: string,
+  password: string,
+  nickname?: string
+) {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/members`, {
+      email,
+      password,
+      nickname,
+    });
+    return response.data; // 성공 시 백엔드에서 반환된 데이터를 반환
+  } catch (error: any) {
+    console.error(
+      "Failed to register member:",
+      error.response?.data || error.message
+    );
+    throw error; // 에러를 호출한 쪽으로 전달
+  }
+}
+
+export async function loginUser(email: string, password: string) {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/login`, {
+      email,
+      password,
+    });
+
+    // Authorization 헤더에서 accessToken 추출
+    const accessToken = response.headers.authorization;
+
+    if (!accessToken) {
+      throw new Error(
+        "Authorization token is missing in the response headers."
+      );
+    }
+
+    return { accessToken, email }; // accessToken 반환
+  } catch (error: any) {
+    console.error("Failed to login:", error.response?.data || error.message);
+    throw error; // 에러를 호출한 쪽으로 전달
+  }
+}
+
+export async function logoutUser() {
+  try {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const response = await axios.post(
+      `${API_BASE_URL}/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data; // 로그아웃 성공 시 반환된 데이터
+  } catch (error: any) {
+    console.error("Failed to logout:", error.response?.data || error.message);
+    throw error; // 에러를 호출한 쪽으로 전달
+  }
+}
