@@ -3,18 +3,75 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Lightbulb, Menu } from "lucide-react";
+import { Lightbulb, LogOut, Menu, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/contexts/auth-context";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function Header() {
   const pathname = usePathname();
+  const { user, logout, isLoading } = useAuth();
 
   const navItems = [
     { name: "Generate", path: "/" },
     { name: "List", path: "/excuses" },
     { name: "Dashboard", path: "/dashboard" },
   ];
+
+  // Render auth button based on authentication state
+  const renderAuthButton = () => {
+    if (isLoading) {
+      return <Skeleton className="h-9 w-20" />;
+    }
+
+    if (user) {
+      return (
+        <Button variant="outline" size="sm" className="gap-2" onClick={logout}>
+          <LogOut className="h-4 w-4" />
+          <span>Logout</span>
+        </Button>
+      );
+    }
+
+    return (
+      <Button variant="outline" size="sm" asChild>
+        <Link href="/login">Login</Link>
+      </Button>
+    );
+  };
+
+  // Render mobile auth section
+  const renderMobileAuth = () => {
+    if (isLoading) {
+      return (
+        <div className="py-4 flex justify-center">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      );
+    }
+
+    if (user) {
+      return (
+        <>
+          <div className="py-2 text-sm text-muted-foreground">
+            Signed in as{" "}
+            <span className="font-medium text-foreground">{user.email}</span>
+          </div>
+          <Button variant="destructive" onClick={logout} className="mt-2">
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </>
+      );
+    }
+
+    return (
+      <Button asChild className="mt-2">
+        <Link href="/login">Login</Link>
+      </Button>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -25,7 +82,7 @@ export function Header() {
             reasonAIble
           </Link>
         </div>
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-4">
           <div className="hidden md:flex gap-4">
             {navItems.map((item) => (
               <Link
@@ -40,6 +97,11 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+          </div>
+
+          {/* Auth buttons */}
+          <div className="hidden md:flex items-center gap-2">
+            {renderAuthButton()}
           </div>
 
           {/* Mobile Navigation */}
@@ -65,6 +127,10 @@ export function Header() {
                     {item.name}
                   </Link>
                 ))}
+
+                <div className="h-px bg-border my-2" />
+
+                {renderMobileAuth()}
               </nav>
             </SheetContent>
           </Sheet>
