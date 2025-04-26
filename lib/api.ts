@@ -3,30 +3,44 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // 백엔드 API 주소
 
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default apiClient;
+
 export async function generateExcuse(situation: string) {
-  const response = await axios.post(`${API_BASE_URL}/excuses/ai`, {
+  const response = await apiClient.post(`/excuses/ai`, {
     situation,
   });
   return response.data.data; // 백엔드에서 반환된 데이터를 반환
 }
 
 export async function fetchExcuses() {
-  const response = await axios.get(`${API_BASE_URL}/excuses`);
+  const response = await apiClient.get(`/excuses`);
   return response.data.data; // 모든 excuses 데이터 반환
 }
 
 export async function fetchExcuseById(id: string) {
-  const response = await axios.get(`${API_BASE_URL}/excuses/${id}`);
+  const response = await apiClient.get(`/excuses/${id}`);
   return response.data.data;
 }
 
 export async function updateExcuse(id: string, data: Partial<Excuse>) {
-  const response = await axios.put(`${API_BASE_URL}/excuses/${id}`, data);
+  const response = await apiClient.put(`/excuses/${id}`, data);
   return response.data.data;
 }
 
 export async function deleteExcuse(id: string) {
-  await axios.delete(`${API_BASE_URL}/excuses/${id}`);
+  await apiClient.delete(`/excuses/${id}`);
 }
 
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
@@ -50,7 +64,7 @@ export async function registerMember(
   nickname?: string
 ) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/members`, {
+    const response = await apiClient.post(`/members`, {
       email,
       password,
       nickname,
@@ -67,7 +81,7 @@ export async function registerMember(
 
 export async function loginUser(email: string, password: string) {
   try {
-    const response = await axios.post(`${API_BASE_URL}/login`, {
+    const response = await apiClient.post(`/login`, {
       email,
       password,
     });
@@ -90,21 +104,7 @@ export async function loginUser(email: string, password: string) {
 
 export async function logoutUser() {
   try {
-    const token = localStorage.getItem("accessToken");
-
-    if (!token) {
-      throw new Error("No access token found");
-    }
-
-    const response = await axios.post(
-      `${API_BASE_URL}/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.post(`/logout`);
 
     return response.data; // 로그아웃 성공 시 반환된 데이터
   } catch (error: any) {
