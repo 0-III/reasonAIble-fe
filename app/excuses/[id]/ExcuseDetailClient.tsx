@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,21 +18,35 @@ import { ArrowLeft, Copy, Edit, Save, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { updateExcuse, deleteExcuse } from "@/lib/api";
+import { updateExcuse, deleteExcuse, fetchExcuseById } from "@/lib/api";
 
-export default function ExcuseDetailClient({
-  id,
-  excuse,
-}: {
-  id: string;
-  excuse: Excuse;
-}) {
+export default function ExcuseDetailClient({ id }: { id: string }) {
   const router = useRouter();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [modifiedExcuse, setModifiedExcuse] = useState(
-    excuse.modifiedExcuse || excuse.excuse
-  );
+  const [excuse, setExcuse] = useState<Excuse | null>(null);
+  const [modifiedExcuse, setModifiedExcuse] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          throw new Error("Access token is missing");
+        }
+
+        const data = await fetchExcuseById(id, token);
+        setExcuse(data);
+        setModifiedExcuse(data.modifiedExcuse || data.excuse);
+      } catch (err: any) {
+        console.error("Failed to fetch excuse:", err);
+        setError("Failed to load the excuse. Please try again later.");
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleSaveModification = async () => {
     try {
@@ -43,6 +57,7 @@ export default function ExcuseDetailClient({
         title: "Excuse updated",
         description: "Your modified excuse has been saved.",
       });
+      setExcuse(updatedExcuse);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update excuse:", error);
@@ -71,6 +86,19 @@ export default function ExcuseDetailClient({
       description: "Your excuse is ready to use.",
     });
   };
+
+  if (error) {
+    return (
+      <div className="container">
+        <h1>Error</h1>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  if (!excuse) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="container max-w-3xl py-4 px-4 md:py-12 md:px-6">
