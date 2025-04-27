@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Lightbulb, LogOut, Menu, Loader2 } from "lucide-react";
+import { LogOut, Menu, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/auth-context";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image"; // 이미지 컴포넌트 추가
 
 export function Header() {
   const pathname = usePathname();
@@ -77,9 +78,16 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
-          <Lightbulb className="h-6 w-6 text-primary" />
-          <Link href="/" className="text-xl font-bold">
-            reasonAIble
+          {/* <Lightbulb className="h-6 w-6 text-primary" /> */}
+          {/* 로고 이미지로 교체 */}
+          <Link href="/">
+            <Image
+              src="/reasonaible-high-resolution-logo-transparent.png"
+              alt="ReasonAIble Logo"
+              width={150} // 로고 너비
+              height={40} // 로고 높이
+              priority // 로고 우선 로드
+            />
           </Link>
         </div>
         <nav className="flex items-center gap-4">
