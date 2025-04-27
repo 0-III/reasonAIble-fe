@@ -36,7 +36,7 @@ export default function ExcuseDetailClient({ id }: { id: string }) {
           throw new Error("Access token is missing");
         }
 
-        const data = await fetchExcuseById(id, token);
+        const data = await fetchExcuseById(id);
         setExcuse(data);
         setModifiedExcuse(data.modifiedExcuse || data.excuse);
       } catch (err: any) {

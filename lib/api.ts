@@ -34,16 +34,6 @@ export async function fetchExcuseById(id: string) {
   return response.data.data;
 }
 
-// export async function fetchExcuseById(id: string, token: string) {
-//   const response = await axios.get(`${API_BASE_URL}/excuses/${id}`, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-
-//   return response.data.data;
-// }
-
 export async function updateExcuse(id: string, data: Partial<Excuse>) {
   const response = await apiClient.put(`/excuses/${id}`, data);
   return response.data.data;
