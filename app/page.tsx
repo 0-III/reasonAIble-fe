@@ -20,6 +20,7 @@ import { Sparkles } from "lucide-react";
 export default function GenerateExcusePage() {
   const [situation, setSituation] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [apiType, setApiType] = useState<'generateExcuse' | 'generateKnlExcuse'>('generateExcuse');
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,10 +31,14 @@ export default function GenerateExcusePage() {
     setIsGenerating(true);
 
     try {
-      // API 호출을 통해 excuse 생성
-      const excuse = await generateExcuse(situation);
-
-      // 생성된 excuse의 ID로 상세 페이지로 이동
+      let excuse;
+      if (apiType === 'generateExcuse') {
+        excuse = await generateExcuse(situation);
+      } else {
+        // @ts-ignore
+        const { generateKnlExcuse } = await import('@/lib/api');
+        excuse = await generateKnlExcuse(situation);
+      }
       router.push(`/excuses/${excuse.id}`);
     } catch (error) {
       console.error("Failed to generate excuse:", error);
@@ -56,6 +61,18 @@ export default function GenerateExcusePage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="p-4 md:p-6">
             <div className="grid gap-4">
+              <div>
+                <label htmlFor="apiType" className="block mb-1 text-sm font-medium">API 선택</label>
+                <select
+                  id="apiType"
+                  value={apiType}
+                  onChange={e => setApiType(e.target.value as 'generateExcuse' | 'generateKnlExcuse')}
+                  className="block w-full border border-input rounded-md p-2 text-base bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="generateExcuse">일반용</option>
+                  <option value="generateKnlExcuse">관리자용</option>
+                </select>
+              </div>
               <Textarea
                 placeholder="I need an excuse for missing a deadline at work..."
                 className="min-h-24 md:min-h-32 resize-none"

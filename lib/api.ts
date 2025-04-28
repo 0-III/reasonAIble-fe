@@ -24,6 +24,13 @@ export async function generateExcuse(situation: string) {
   return response.data.data; // 백엔드에서 반환된 데이터를 반환
 }
 
+export async function generateKnlExcuse(situation: string) {
+  const response = await apiClient.post(`/excuses/knl-ai`, {
+    situation,
+  });
+  return response.data.data;
+}
+
 export async function fetchExcuses() {
   const response = await apiClient.get(`/excuses`);
   return response.data.data; // 모든 excuses 데이터 반환
